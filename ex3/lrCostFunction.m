@@ -36,8 +36,10 @@ n = size(theta);
 sig = sigmoid(X * theta);
 A = -y .* log(sig);
 B = (1 - y) .* log(1 - sig);
-J = sum(A - B)/m + lambda/(2*m) * sum(theta(2:end).^2);;
-grad = sum((sig - y) .* X)'/m + lambda/m .* prepad(theta(2:end),n(1));
+J = sum(A - B)/m + lambda/(2*m) * sum(theta(2:end).^2);
+
+s = repmat((sig - y), 1, n(1));
+grad = sum(s .* X)'/m + lambda/m .* prepad(theta(2:end),n(1));
 
 % =============================================================
 
