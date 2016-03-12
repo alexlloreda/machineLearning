@@ -25,7 +25,7 @@ X = [ones(m, 1) X];
 
 % If single row of X: a2 = sigmoid(Theta1 * X);  p = sigmoid(Theta2 * a2);
 a2 = sigmoid(Theta1 * X');
-a2 = [ones(size(a2,2), 1)'; a2];
+a2 = [ones(1, size(a2,2)); a2];
 z = sigmoid(Theta2 * a2);
 [v, p] = max(z', [], 2);
 
