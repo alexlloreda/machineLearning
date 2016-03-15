@@ -44,18 +44,16 @@ Theta2_grad = zeros(size(Theta2));
 A1 = [ones(m,1) X];
 sig1 = sigmoid(Theta1 * A1');
 A2 = [ones(1,size(sig1,2)); sig1];
-h0 = sigmoid(Theta2 * A2)'
-[v, p] = max(h0, [], 2)
-%h0 = sigmoid(A2' * Theta2');
-mh0 = size(h0)
-yy = repmat(y, 1, size(h0,2));
-log(h0);
+h0 = sigmoid(Theta2 * A2)';
+
+%Recode J so that the label is transformed into a vector of 0 with a 1
+yy = zeros(size(h0));
+for i = 1:size(h0,1)
+  yy(i,y(i)) = 1;
+end
+
 A = -yy .* log(h0);
 B = (1 - yy) .* log(1 - h0);
-%hh = h0([1,2,],:)
-%yyy = yy([1,2],:)
-%aa = A([1,2],:)
-%bb = B([1,2],:)
 J = sum(sum(A-B))/m
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
