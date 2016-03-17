@@ -12,7 +12,6 @@ function [J grad] = nnCostFunction(nn_params, ...
 %
 %   The returned parameter grad should be a "unrolled" vector of the
 %   partial derivatives of the neural network.
-%
 
 % Reshape nn_params back into the parameters Theta1 and Theta2, the weight
 % matrices for our 2 layer neural network
@@ -24,10 +23,6 @@ Theta2 = reshape(nn_params((1 + (hidden_layer_size * (input_layer_size + 1))):en
 
 % Setup some useful variables
 m = size(X, 1);
-
-% You need to return the following variables correctly
-Theta1_grad = zeros(size(Theta1));
-Theta2_grad = zeros(size(Theta2));
 
 % ====================== YOUR CODE HERE ======================
 % Part 1: Feedforward the neural network and return the cost in the variable J.
@@ -53,46 +48,27 @@ J = sum(sum(A-B))/m;
 % Regularize the cost function
 reg = @(x) sum(sum(x(:, 2:end).^2)); % Anonymous functions for the win!
 J = J + lambda/(2*m) * (reg(Theta1) + reg(Theta2));
+
 %Part 2: Implement the backpropagation algorithm to compute the gradients
 %      Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %      the cost function with respect to Theta1 and Theta2 in Theta1_grad and
 %      Theta2_grad, respectively. After implementing Part 2, you can check that
 %      your implementation is correct by running checkNNGradients
-%
-%      Hint: We recommend implementing backpropagation using a for-loop over the
-%            training examples if you are implementing it for the first time.
-%
-d3 = h0 - yy
+d3 = h0 - yy;
 d2 = Theta2' * d3';
-d2 = (d2(2:end, :) .* (sig1.*(1-sig1)))'
-Delta2 = d3' * A2';
-Delta1 = d2' * A1;
-Theta2_grad = Delta2/m
-Theta1_grad = Delta1/m
-
-%d = zeros(m,1);
-%for t = 1:m
-  % 1 I have already done the calculation in vector form
-  % 2 delta3 is also vectorized
-  % 3 delta2 = Theta2^t * delta3 .* g'(z2)
-  % delta2(t) = Theta2
-  % 4
-
-  %d(t) = d(t) + delta2(:,t)' * X(t,:)';
-%end
-%Theta2_grad = d;
+d2 = (d2(2:end, :) .* (sig1.*(1-sig1)))';
+Theta2_grad = (d3' * A2')/m;
+Theta1_grad = (d2' * A1)/m;
 
 % Part 3: Implement regularization with the cost function and gradients.
-%
-%         Hint: You can implement this around the code for
-%               backpropagation. That is, you can compute the gradients for
-%               the regularization separately and then add them to Theta1_grad
-%               and Theta2_grad from Part 2.
-%
+% Hint: You can implement this around the code for backpropagation. That is, you
+%       can compute the gradients for the regularization separately and then add
+%       them to Theta1_grad and Theta2_grad from Part 2.
+rt2 = [zeros(size(Theta2,1),1) Theta2(:,2:end)] * lambda/m;
+rt1 = [zeros(size(Theta1,1),1) Theta1(:,2:end)] * lambda/m;
 
-
-
-
+Theta1_grad = Theta1_grad + rt1;
+Theta2_grad = Theta2_grad + rt2;
 
 % -------------------------------------------------------------
 
@@ -100,6 +76,5 @@ Theta1_grad = Delta1/m
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
