@@ -62,22 +62,25 @@ J = J + lambda/(2*m) * (reg(Theta1) + reg(Theta2));
 %      Hint: We recommend implementing backpropagation using a for-loop over the
 %            training examples if you are implementing it for the first time.
 %
-delta3 = h0 - yy;
-delta2 = Theta2' * delta3';
-delta2 = delta2(2:end, :) .* sigmoidGradient(sig1)
-Theta2_grad = (delta3' * sig1');
-Theta1_grad = (delta2 * X);
-d = zeros(m,1);
-for t = 1:m
+d3 = h0 - yy
+d2 = Theta2' * d3';
+d2 = (d2(2:end, :) .* (sig1.*(1-sig1)))'
+Delta2 = d3' * A2';
+Delta1 = d2' * A1;
+Theta2_grad = Delta2/m
+Theta1_grad = Delta1/m
+
+%d = zeros(m,1);
+%for t = 1:m
   % 1 I have already done the calculation in vector form
   % 2 delta3 is also vectorized
   % 3 delta2 = Theta2^t * delta3 .* g'(z2)
   % delta2(t) = Theta2
   % 4
 
-  d(t) = d(t) + delta2(:,t)' * X(t,:)';
-end
-Theta2_grad = d;
+  %d(t) = d(t) + delta2(:,t)' * X(t,:)';
+%end
+%Theta2_grad = d;
 
 % Part 3: Implement regularization with the cost function and gradients.
 %
