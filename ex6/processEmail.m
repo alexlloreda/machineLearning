@@ -1,10 +1,8 @@
 function word_indices = processEmail(email_contents)
-%PROCESSEMAIL preprocesses a the body of an email and
-%returns a list of word_indices 
-%   word_indices = PROCESSEMAIL(email_contents) preprocesses 
-%   the body of an email and returns a list of indices of the 
-%   words contained in the email. 
-%
+%PROCESSEMAIL preprocesses a the body of an email and returns a list of
+%word_indices
+%   word_indices = PROCESSEMAIL(email_contents) preprocesses the body of an
+%   email and returns a list of indices of the words contained in the email.
 
 % Load Vocabulary
 vocabList = getVocabList();
@@ -13,7 +11,6 @@ vocabList = getVocabList();
 word_indices = [];
 
 % ========================== Preprocess Email ===========================
-
 % Find the Headers ( \n\n and remove )
 % Uncomment the following lines if you are working with raw emails with the
 % full headers
@@ -25,8 +22,8 @@ word_indices = [];
 email_contents = lower(email_contents);
 
 % Strip all HTML
-% Looks for any expression that starts with < and ends with > and replace
-% and does not have any < or > in the tag it with a space
+% Find expressions that start with < and ends with > and don't have any < or >
+% in the tag and replace them with a space
 email_contents = regexprep(email_contents, '<[^<>]+>', ' ');
 
 % Handle Numbers
@@ -60,13 +57,13 @@ while ~isempty(email_contents)
     [str, email_contents] = ...
        strtok(email_contents, ...
               [' @$/#.-:&*+=[]?!(){},''">_<;%' char(10) char(13)]);
-   
+
     % Remove any non alphanumeric characters
     str = regexprep(str, '[^a-zA-Z0-9]', '');
 
-    % Stem the word 
+    % Stem the word
     % (the porterStemmer sometimes has issues, so we use a try catch block)
-    try str = porterStemmer(strtrim(str)); 
+    try str = porterStemmer(strtrim(str));
     catch str = ''; continue;
     end;
 
@@ -79,35 +76,32 @@ while ~isempty(email_contents)
     % found
     % ====================== YOUR CODE HERE ======================
     % Instructions: Fill in this function to add the index of str to
-    %               word_indices if it is in the vocabulary. At this point
-    %               of the code, you have a stemmed word from the email in
-    %               the variable str. You should look up str in the
-    %               vocabulary list (vocabList). If a match exists, you
-    %               should add the index of the word to the word_indices
-    %               vector. Concretely, if str = 'action', then you should
-    %               look up the vocabulary list to find where in vocabList
-    %               'action' appears. For example, if vocabList{18} =
-    %               'action', then, you should add 18 to the word_indices 
-    %               vector (e.g., word_indices = [word_indices ; 18]; ).
-    % 
-    % Note: vocabList{idx} returns a the word with index idx in the
-    %       vocabulary list.
-    % 
+    %       word_indices if it is in the vocabulary. At this point of the code,
+    %       you have a stemmed word from the email in the variable str. You
+    %       should look up str in the vocabulary list (vocabList). If a match
+    %       exists, you should add the index of the word to the word_indices
+    %       vector. Concretely, if str = 'action', then you should look up the
+    %       vocabulary list to find where in vocabList 'action' appears. For
+    %       example, if vocabList{18} = 'action', then, you should add 18 to the
+    %       word_indices vector (e.g., word_indices = [word_indices ; 18]; ).
+    %
+    % Note: vocabList{idx} returns the word with index idx in the vocabulary
+    %       list.
+    %
     % Note: You can use strcmp(str1, str2) to compare two strings (str1 and
     %       str2). It will return 1 only if the two strings are equivalent.
-    %
-
-
-
-
-
-
-
-
-
-
+    % Solution 1
+    % for i = 1:size(vocabList)
+    %   vocab = vocabList{i};
+    %   if strcmp(str,vocab) == 1
+    %     word_indices = [word_indices ; i];
+    %     continue;
+    %   end
+    % end
+    % Vectorised solution
+    indices = find(strcmp(str, vocabList));
+    word_indices = [word_indices; indices];
     % =============================================================
-
 
     % Print to screen, ensuring that the output lines are not too long
     if (l + length(str) + 1) > 78
@@ -121,5 +115,4 @@ end
 
 % Print footer
 fprintf('\n\n=========================\n');
-
 end
